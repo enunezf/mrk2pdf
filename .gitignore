@@ -1,0 +1,10 @@
+# Compiled binary
+/mrk2pdf
+*.exe
+
+# Test/build artifacts
+*.test
+*.out
+
+# Regenerated at runtime from embedded assets
+/template/
