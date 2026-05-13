@@ -51,12 +51,13 @@ requisitos de auditoría** establecidos por el equipo legal.
 
 ### Flujo simplificado
 
-```
-[Cliente] --HTTPS--> [API Gateway] --gRPC--> [auth-svc] --SQL--> [PostgreSQL]
-                                                  |
-                                                  +--SET--> [Redis]
-                                                  |
-                                                  +--EVENT--> [Audit Bus]
+```mermaid
+flowchart LR
+    Cliente -->|HTTPS| Gateway[API Gateway]
+    Gateway -->|gRPC| Auth[auth-svc]
+    Auth -->|SQL| Postgres[(PostgreSQL)]
+    Auth -->|SET| Redis[(Redis)]
+    Auth -->|EVENT| Audit[Audit Bus]
 ```
 
 ## Plan de migración
@@ -120,6 +121,29 @@ Apagar el servicio legado solo tras **30 días** sin tráfico real.
 - Ecosistema maduro de bibliotecas criptográficas (`crypto/*`, `golang.org/x/crypto`)
 - Equipo de plataforma ya tiene experiencia en `inventory-svc` y `billing-svc`
 
+A modo ilustrativo, así luciría la emisión de un token corto en `auth-svc`:
+
+```go
+package auth
+
+import (
+    "time"
+
+    "github.com/golang-jwt/jwt/v5"
+)
+
+// issueToken emite un JWT firmado con HS256 válido por 15 minutos.
+func issueToken(userID string) (string, error) {
+    claims := jwt.MapClaims{
+        "sub": userID,
+        "iss": "auth-svc",
+        "exp": time.Now().Add(15 * time.Minute).Unix(),
+    }
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    return token.SignedString(signingKey)
+}
+```
+
 ### ¿Por qué no Rust?
 
 Considerado seriamente, pero descartado por:
@@ -127,6 +151,13 @@ Considerado seriamente, pero descartado por:
 1. Curva de aprendizaje del equipo (~6 meses estimados)
 2. Tiempos de compilación incompatibles con el ciclo de CI actual
 3. Beneficios marginales sobre Go para este caso de uso
+
+## Anexo: imagen de ejemplo
+
+![Paisaje de montaña](img_ejemplo.jpg "Imagen de ejemplo")
+
+*Imagen incluida únicamente para validar el renderizado de imágenes en el PDF.
+No guarda relación con el contenido del informe.*
 
 ## Referencias
 
