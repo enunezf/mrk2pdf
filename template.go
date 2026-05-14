@@ -16,9 +16,14 @@ const (
 	defaultTemplate = "default"
 )
 
-//go:embed assets/index.html assets/style.css
-var defaultAssets embed.FS
+//go:embed assets
+var embeddedTemplates embed.FS
 
+// ensureTemplates walks every template embedded under assets/ and extracts
+// each one to template/<name>/ if it doesn't already exist on disk. The
+// -d flag additionally re-extracts the default template, overwriting any
+// local edits — other templates are never overwritten so user
+// customisations are preserved across runs.
 func ensureTemplates(force bool) error {
 	if _, err := os.Stat(templateRoot); os.IsNotExist(err) {
 		fmt.Println("Creando carpeta de plantillas...")
@@ -27,36 +32,57 @@ func ensureTemplates(force bool) error {
 		}
 	}
 
-	defaultDir := filepath.Join(templateRoot, defaultTemplate)
-	_, statErr := os.Stat(defaultDir)
+	entries, err := fs.ReadDir(embeddedTemplates, "assets")
+	if err != nil {
+		return fmt.Errorf("listando templates embebidos: %w", err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		if err := extractTemplate(entry.Name(), force); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func extractTemplate(name string, force bool) error {
+	dstDir := filepath.Join(templateRoot, name)
+	_, statErr := os.Stat(dstDir)
 	missing := os.IsNotExist(statErr)
 
-	if !missing && !force {
+	// -d only overrides the default template; user customisations on other
+	// templates are always preserved (extract only if missing).
+	mustExtract := missing || (force && name == defaultTemplate)
+	if !mustExtract {
 		return nil
 	}
 
-	if force && !missing {
-		fmt.Printf("Sobrescribiendo template/%s/ (flag -d)...\n", defaultTemplate)
+	if !missing {
+		fmt.Printf("Sobrescribiendo template/%s/ (flag -d)...\n", name)
 	} else {
-		fmt.Printf("Creando template/%s/ con archivos por defecto...\n", defaultTemplate)
+		fmt.Printf("Creando template/%s/ con archivos por defecto...\n", name)
 	}
 
-	if err := os.MkdirAll(defaultDir, 0o755); err != nil {
-		return fmt.Errorf("creando %s: %w", defaultDir, err)
+	if err := os.MkdirAll(dstDir, 0o755); err != nil {
+		return fmt.Errorf("creando %s: %w", dstDir, err)
 	}
 
-	return fs.WalkDir(defaultAssets, "assets", func(path string, d fs.DirEntry, err error) error {
+	srcDir := "assets/" + name
+	return fs.WalkDir(embeddedTemplates, srcDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if d.IsDir() {
 			return nil
 		}
-		data, err := defaultAssets.ReadFile(path)
+		data, err := embeddedTemplates.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("leyendo asset embebido %s: %w", path, err)
 		}
-		dst := filepath.Join(defaultDir, filepath.Base(path))
+		dst := filepath.Join(dstDir, filepath.Base(path))
 		if err := os.WriteFile(dst, data, 0o644); err != nil {
 			return fmt.Errorf("escribiendo %s: %w", dst, err)
 		}

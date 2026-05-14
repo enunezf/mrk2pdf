@@ -1,0 +1,271 @@
+/* ─── Elegant template ─────────────────────────────────────────── */
+
+:root {
+    --primary: #1e3a5f;
+    --accent: #c9a961;
+    --bg: #faf7f2;
+    --text: #2c2c2c;
+    --muted: #6b6b6b;
+    --rule: #d4d4d4;
+    --code-bg: #2d2d2d;
+}
+
+body {
+    font-family: 'Lora', 'Georgia', serif;
+    font-size: 11pt;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+}
+
+/* ─── Headings ─────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Georgia', serif;
+    color: var(--primary);
+    font-weight: 700;
+    margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    line-height: 1.25;
+}
+
+h1 { font-size: 26pt; letter-spacing: -0.01em; }
+h2 {
+    font-size: 19pt;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--accent);
+}
+h3 { font-size: 14pt; }
+h4 { font-size: 12pt; font-style: italic; }
+h5, h6 { font-size: 11pt; color: var(--muted); }
+
+p {
+    margin: 0 0 0.9em 0;
+    text-align: justify;
+    hyphens: auto;
+}
+
+a { color: var(--primary); text-decoration: underline; }
+
+/* ─── Cover page ───────────────────────────────────────────────── */
+.cover {
+    page-break-after: always;
+    min-height: 22cm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2cm 1cm;
+}
+
+.cover-accent {
+    width: 4cm;
+    height: 5px;
+    background: var(--accent);
+    margin-bottom: 2.5cm;
+}
+
+.cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32pt;
+    line-height: 1.15;
+    color: var(--primary);
+    margin: 0 0 1.2cm 0;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    max-width: 14cm;
+    border: none;
+    padding: 0;
+}
+
+.cover-author {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 14pt;
+    color: var(--text);
+    margin: 0.3cm 0;
+}
+
+.cover-date {
+    font-family: 'Lora', serif;
+    font-size: 10pt;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.5cm;
+}
+
+.cover-tags {
+    margin-top: 1.8cm;
+}
+
+.tag {
+    display: inline-block;
+    border: 1px solid var(--accent);
+    color: var(--primary);
+    padding: 0.25em 0.9em;
+    margin: 0.15em;
+    border-radius: 14px;
+    font-size: 8.5pt;
+    font-family: 'Lora', serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+}
+
+/* ─── Body content ─────────────────────────────────────────────── */
+.content > h1:first-child,
+.content > h2:first-child {
+    margin-top: 0;
+}
+
+/* ─── Inline and block code ────────────────────────────────────── */
+code {
+    font-family: 'Menlo', 'Consolas', monospace;
+    background: #efeae0;
+    color: #5d4530;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-size: 0.92em;
+}
+
+pre[class*="language-"] {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 1em 1.2em;
+    margin: 1.2em 0;
+    font-size: 9.5pt;
+    overflow-x: auto;
+    border-left: 4px solid var(--accent);
+}
+
+pre[class*="language-"] code,
+code[class*="language-"] {
+    background: transparent;
+    color: #ccc;
+    padding: 0;
+    text-shadow: none;
+}
+
+/* ─── Blockquotes ──────────────────────────────────────────────── */
+blockquote {
+    border-left: 4px solid var(--accent);
+    background: #f3eee3;
+    padding: 0.8em 1.2em;
+    margin: 1.2em 0;
+    color: var(--text);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+blockquote strong { font-style: normal; color: var(--primary); }
+
+/* ─── Tables ───────────────────────────────────────────────────── */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.2em 0;
+    font-size: 10pt;
+}
+
+th {
+    background: var(--primary);
+    color: white;
+    padding: 0.6em 0.9em;
+    text-align: left;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: none;
+}
+
+td {
+    padding: 0.5em 0.9em;
+    border-bottom: 1px solid var(--rule);
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    vertical-align: top;
+}
+
+tr:nth-child(even) td {
+    background: rgba(201, 169, 97, 0.06);
+}
+
+/* ─── Lists ────────────────────────────────────────────────────── */
+ul, ol { padding-left: 1.6em; margin: 0.5em 0 1em 0; }
+li { margin-bottom: 0.4em; }
+
+ul li::marker { color: var(--accent); }
+ol li::marker { color: var(--primary); font-weight: 700; }
+
+/* Task list items: spacing tweak */
+ul li input[type="checkbox"] { margin-right: 0.4em; }
+
+/* ─── Images ───────────────────────────────────────────────────── */
+img {
+    max-width: 100%;
+    margin: 1em 0;
+    border-radius: 4px;
+    display: block;
+}
+
+/* ─── Horizontal rule ──────────────────────────────────────────── */
+hr {
+    border: 0;
+    border-top: 1px solid var(--accent);
+    margin: 2em auto;
+    width: 50%;
+}
+
+/* ─── Table of contents ────────────────────────────────────────── */
+.toc {
+    background: white;
+    border: 1px solid var(--accent);
+    padding: 1.5em 2em;
+    margin: 2em 0 3em 0;
+    page-break-after: always;
+    border-radius: 4px;
+}
+
+.toc-title {
+    margin: 0 0 1em 0;
+    font-size: 18pt;
+    color: var(--primary);
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.5em;
+    font-weight: 700;
+}
+
+.toc ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.toc > ul > li {
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.toc ul ul {
+    padding-left: 1.4em;
+    font-size: 0.92em;
+    font-weight: 400;
+    margin-top: 0.3em;
+}
+
+.toc a {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.toc a::before {
+    content: "·";
+    color: var(--accent);
+    margin-right: 0.5em;
+    font-weight: 700;
+}

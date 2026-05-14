@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Meta.Title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        /* Running headers and footers — injected with metadata at render time. */
+        @page {
+            margin: 3cm 2.2cm 2.5cm 2.2cm;
+            @top-left {
+                content: "{{.Meta.Title}}";
+                font-family: 'Playfair Display', serif;
+                font-size: 9pt;
+                font-style: italic;
+                color: #1e3a5f;
+            }
+            @top-right {
+                content: "{{.Meta.Date}}";
+                font-family: 'Lora', serif;
+                font-size: 9pt;
+                color: #888;
+            }
+            @bottom-left {
+                content: "{{if .Meta.Author}}{{.Meta.Author}}{{end}}";
+                font-family: 'Lora', serif;
+                font-size: 9pt;
+                color: #888;
+            }
+            @bottom-right {
+                content: counter(page) " / " counter(pages);
+                font-family: 'Lora', serif;
+                font-size: 9pt;
+                color: #1e3a5f;
+            }
+            @bottom-center {
+                content: "·";
+                color: #c9a961;
+                font-size: 12pt;
+            }
+        }
+        /* The cover page is clean — no running header/footer. */
+        @page :first {
+            @top-left { content: none; }
+            @top-right { content: none; }
+            @bottom-left { content: none; }
+            @bottom-right { content: none; }
+            @bottom-center { content: none; }
+        }
+    </style>
+    <style>{{.Styles}}</style>
+</head>
+<body>
+    {{if .Meta.Title}}
+    <header class="cover">
+        <div class="cover-accent"></div>
+        <h1 class="cover-title">{{.Meta.Title}}</h1>
+        {{if .Meta.Author}}<div class="cover-author">{{.Meta.Author}}</div>{{end}}
+        {{if .Meta.Date}}<div class="cover-date">{{.Meta.Date}}</div>{{end}}
+        {{if .Meta.Tags}}
+        <div class="cover-tags">{{range .Meta.Tags}}<span class="tag">{{.}}</span>{{end}}</div>
+        {{end}}
+    </header>
+    {{end}}
+
+    <main class="content">
+        {{.Content}}
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        (function () {
+            document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+                var div = document.createElement('div');
+                div.className = 'mermaid';
+                div.textContent = code.textContent;
+                code.parentElement.replaceWith(div);
+            });
+            if (window.Prism) { Prism.highlightAll(); }
+            if (window.mermaid) {
+                window.mermaid.initialize({
+                    startOnLoad: false,
+                    securityLevel: 'loose',
+                    theme: 'neutral'
+                });
+                window.mermaid.run().catch(function (e) { console.error('mermaid:', e); });
+            }
+        })();
+    </script>
+</body>
+</html>
