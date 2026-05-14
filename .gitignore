@@ -1,6 +1,6 @@
-# Compiled binary
+# Local builds (go build . o make local) — el cross-compile vive en dist/
 /mrk2pdf
-*.exe
+/mrk2pdf.exe
 
 # Test/build artifacts
 *.test

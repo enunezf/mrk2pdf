@@ -53,7 +53,29 @@ Un navegador basado en Chromium en el sistema:
 
 Edge viene preinstalado en Windows 10/11. macOS suele tener Chrome o se instala fácil. En Linux, `chromium-browser` cubre todo. Para WSL puro con solo Windows .exe, [ver limitaciones](#limitaciones-conocidas).
 
-### Compilar
+### Binarios pre-compilados
+
+Los binarios para Linux, macOS y Windows viven en la carpeta [`dist/`](dist/) del repositorio. Descargá el que corresponda a tu plataforma:
+
+| Plataforma | Binario |
+|---|---|
+| Linux amd64 (PC, server) | [`mrk2pdf-linux-amd64`](dist/mrk2pdf-linux-amd64) |
+| Linux arm64 (RPi, AWS Graviton) | [`mrk2pdf-linux-arm64`](dist/mrk2pdf-linux-arm64) |
+| macOS Intel | [`mrk2pdf-mac-amd64`](dist/mrk2pdf-mac-amd64) |
+| macOS Apple Silicon | [`mrk2pdf-mac-arm64`](dist/mrk2pdf-mac-arm64) |
+| Windows amd64 | [`mrk2pdf-windows-amd64.exe`](dist/mrk2pdf-windows-amd64.exe) |
+
+Cada binario es de ~12 MB con todos los assets embebidos (plantillas + dependencias). Las sumas SHA-256 están en [`dist/SHA256SUMS`](dist/SHA256SUMS).
+
+En Linux/macOS, después de descargar:
+
+```bash
+chmod +x mrk2pdf-linux-amd64
+mv mrk2pdf-linux-amd64 ~/bin/mrk2pdf   # o donde sea que tengas tu PATH
+mrk2pdf -l
+```
+
+### Compilar desde fuentes
 
 ```bash
 git clone <url-del-repo>
@@ -61,7 +83,15 @@ cd mrk2pdf
 go build -o mrk2pdf .
 ```
 
-Requiere Go 1.22+. El resultado es un binario único de ~16 MB con todos los assets embebidos.
+Requiere Go 1.22+. El resultado es un binario único de ~17 MB (sin strip) con todos los assets embebidos.
+
+Para regenerar la carpeta `dist/` con los 5 binarios de las plataformas soportadas, usá el `Makefile`:
+
+```bash
+make all          # los 5 binarios
+make checksums    # SHA256SUMS
+make help         # lista de targets disponibles
+```
 
 ## Uso rápido
 
