@@ -13,19 +13,24 @@ import (
 )
 
 const (
-	// A4 paper size expressed in inches, the unit expected by Chrome DevTools.
-	a4WidthInches  = 8.27  // 210 mm
-	a4HeightInches = 11.69 // 297 mm
-
 	overallTimeout = 60 * time.Second
 	mermaidTimeout = 15 * time.Second
 )
 
+// Options bundles everything GeneratePDF needs to know.
+type Options struct {
+	HTML        []byte
+	OutputPath  string
+	BrowserPath string
+	PageSize    PageSize
+	Landscape   bool
+}
+
 // GeneratePDF launches a Chromium-based browser in headless mode, loads
-// htmlContent via a data: URL, waits for any mermaid diagrams to finish
-// rendering, and writes the resulting PDF to outputPath.
-func GeneratePDF(htmlContent []byte, outputPath, browserPath string) error {
-	alloc, err := newAllocator(context.Background(), browserPath)
+// opts.HTML via a data: URL, waits for any mermaid diagrams to finish
+// rendering, and writes the resulting PDF to opts.OutputPath.
+func GeneratePDF(opts Options) error {
+	alloc, err := newAllocator(context.Background(), opts.BrowserPath)
 	if err != nil {
 		return err
 	}
@@ -37,7 +42,7 @@ func GeneratePDF(htmlContent []byte, outputPath, browserPath string) error {
 	runCtx, cancelRun := context.WithTimeout(browserCtx, overallTimeout)
 	defer cancelRun()
 
-	dataURL := "data:text/html;base64," + base64.StdEncoding.EncodeToString(htmlContent)
+	dataURL := "data:text/html;base64," + base64.StdEncoding.EncodeToString(opts.HTML)
 
 	var pdfBytes []byte
 	err = chromedp.Run(runCtx,
@@ -47,8 +52,9 @@ func GeneratePDF(htmlContent []byte, outputPath, browserPath string) error {
 		chromedp.ActionFunc(func(ctx context.Context) error {
 			buf, _, err := page.PrintToPDF().
 				WithPrintBackground(true).
-				WithPaperWidth(a4WidthInches).
-				WithPaperHeight(a4HeightInches).
+				WithPaperWidth(opts.PageSize.Width).
+				WithPaperHeight(opts.PageSize.Height).
+				WithLandscape(opts.Landscape).
 				WithMarginTop(0).
 				WithMarginBottom(0).
 				WithMarginLeft(0).
@@ -62,14 +68,14 @@ func GeneratePDF(htmlContent []byte, outputPath, browserPath string) error {
 		}),
 	)
 	if err != nil {
-		if IsWindowsExecutable(browserPath) && looksLikeNetworkError(err) {
+		if IsWindowsExecutable(opts.BrowserPath) && looksLikeNetworkError(err) {
 			return fmt.Errorf("%w\n\n%s", err, wslFirewallHelp())
 		}
 		return fmt.Errorf("generando PDF: %w", err)
 	}
 
-	if err := os.WriteFile(outputPath, pdfBytes, 0o644); err != nil {
-		return fmt.Errorf("escribiendo PDF en %s: %w", outputPath, err)
+	if err := os.WriteFile(opts.OutputPath, pdfBytes, 0o644); err != nil {
+		return fmt.Errorf("escribiendo PDF en %s: %w", opts.OutputPath, err)
 	}
 	return nil
 }
@@ -96,8 +102,6 @@ func newAllocator(parent context.Context, browserPath string) (*allocator, error
 	return &allocator{ctx: ctx, cancel: cancel}, nil
 }
 
-// looksLikeNetworkError reports whether err appears to come from a failed
-// TCP/WS dial. Used to surface a targeted hint for WSL → Windows firewall.
 func looksLikeNetworkError(err error) bool {
 	msg := err.Error()
 	for _, marker := range []string{"i/o timeout", "connection refused", "could not dial", "no route to host"} {
@@ -108,10 +112,6 @@ func looksLikeNetworkError(err error) bool {
 	return false
 }
 
-// wslFirewallHelp returns user-facing guidance for the most common
-// failure mode when chromedp connects to a Windows chrome.exe from WSL:
-// Windows Defender Firewall categorising the vEthernet (WSL) interface
-// as Public and dropping inbound traffic to chrome.exe.
 func wslFirewallHelp() string {
 	return strings.Join([]string{
 		"El navegador arrancó en Windows pero la comunicación DevTools desde WSL falló.",

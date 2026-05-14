@@ -79,3 +79,88 @@ hr {
     border-top: 1px solid #ddd;
     margin: 1.5em 0;
 }
+
+/* ─── Metadata header (rendered from frontmatter) ────────────────── */
+.meta {
+    border-bottom: 2px solid #333;
+    padding-bottom: 1em;
+    margin-bottom: 2em;
+    text-align: center;
+}
+
+.meta-title {
+    margin: 0 0 0.4em 0;
+    font-size: 24pt;
+    line-height: 1.2;
+}
+
+.meta-author,
+.meta-date {
+    color: #666;
+    font-size: 10.5pt;
+    margin: 0.2em 0;
+}
+
+.meta-tags {
+    margin-top: 0.6em;
+}
+
+.tag {
+    display: inline-block;
+    background: #eaeaea;
+    color: #444;
+    padding: 0.2em 0.7em;
+    border-radius: 10px;
+    margin: 0 0.15em;
+    font-size: 9pt;
+}
+
+/* ─── Table of contents ──────────────────────────────────────────── */
+.toc {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 1em 1.5em;
+    margin: 1.5em 0 2em 0;
+    border-radius: 4px;
+    page-break-after: avoid;
+}
+
+.toc-title {
+    margin: 0 0 0.6em 0;
+    font-size: 14pt;
+    color: #333;
+    font-family: 'Georgia', serif;
+}
+
+.toc ul {
+    margin: 0;
+    padding-left: 1.2em;
+    list-style: none;
+}
+
+.toc ul ul {
+    padding-left: 1em;
+    font-size: 0.95em;
+    margin-top: 0.2em;
+}
+
+.toc li {
+    margin-bottom: 0.25em;
+}
+
+.toc a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+/* ─── Syntax highlighting (Prism theme overrides) ────────────────── */
+pre[class*="language-"] {
+    border-radius: 4px;
+    font-size: 9.5pt;
+    margin: 1em 0;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    text-shadow: none;
+}
