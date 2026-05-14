@@ -269,3 +269,9 @@ hr {
     margin-right: 0.5em;
     font-weight: 700;
 }
+
+/* ─── Salto de página (\newpage en el markdown) ──────────────────── */
+.pagebreak {
+    break-after: page;
+    page-break-after: always;
+}

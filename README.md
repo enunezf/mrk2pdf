@@ -312,6 +312,49 @@ Si no hay bloque `---...---` al inicio del archivo, todo el contenido se trata c
 
 Si el YAML está malformado (sintaxis rota), el render falla con un error claro indicando línea y motivo. En [modo batch](#modo-batch) o [modo watch](#modo-watch), el error se reporta pero el proceso sigue con los otros archivos.
 
+## Saltos de página
+
+Markdown no tiene un elemento nativo para saltos de página (es un formato pensado para pantalla). `mrk2pdf` soporta dos formas:
+
+### Marcador `\newpage` (estilo Pandoc)
+
+Una línea con solo `\newpage` se traduce a un salto de página antes de pasar al parser:
+
+```markdown
+# Sección uno
+
+Contenido de la primera página.
+
+\newpage
+
+# Sección dos
+
+Esto empieza arriba de la siguiente página.
+```
+
+**Reglas:**
+- Tiene que estar **en su propia línea** (puede tener espacios o tabs antes/después)
+- Para escapar (que el literal `\newpage` aparezca en el PDF sin disparar salto), usar `\\newpage`
+- **Limitación:** si pones `\newpage` literalmente dentro de un bloque de código (\`\`\` ... \`\`\`), el pre-procesador también lo reemplaza. Si necesitás mostrar el literal en un code block, usá `\\newpage` ahí también.
+
+### HTML directo
+
+Si preferís más control o el marcador no encaja en tu flujo, podés usar HTML inline (Markdown lo deja pasar tal cual):
+
+```markdown
+<div class="pagebreak"></div>
+```
+
+La clase `.pagebreak` está definida en los 4 templates embebidos con la regla:
+```css
+.pagebreak {
+    break-after: page;
+    page-break-after: always;
+}
+```
+
+Si usás un template custom que no tenga esa clase, el HTML que genera `\newpage` incluye también el estilo inline como red de seguridad, así que funciona igual.
+
 ## Tabla de contenidos en el documento
 
 Hay dos formas mutuamente excluyentes de inyectar el TOC:

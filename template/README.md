@@ -61,6 +61,19 @@ Si el `.md` no tiene frontmatter o le faltan campos, el converter aplica fallbac
 | `{{.Content}}` | HTML del markdown (ya parseado con goldmark + GFM) |
 | `{{if .Meta.Author}}…{{end}}` | Renderiza solo si Author está presente |
 
+### Salto de página
+
+`mrk2pdf` reemplaza líneas con solo `\newpage` por `<div class="pagebreak" style="break-after: page; page-break-after: always;"></div>` antes de pasar al parser. Cualquier plantilla que quiera permitir customizar este comportamiento (por ejemplo, agregar márgenes extras o resetear contadores) puede definir la regla en su `style.css`:
+
+```css
+.pagebreak {
+    break-after: page;
+    page-break-after: always;
+}
+```
+
+El estilo inline en el HTML actúa como red de seguridad si la plantilla custom olvida la regla.
+
 ### Inyección dinámica en CSS
 
 Los placeholders también se pueden usar dentro de un bloque `<style>` en `index.html`. Esto es útil para `@page` con margin boxes que necesitan el título o autor en runtime:

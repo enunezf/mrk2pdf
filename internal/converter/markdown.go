@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -19,10 +20,30 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
+// pageBreakRegex matches a line that contains only the literal '\newpage'
+// (optionally surrounded by whitespace). The multiline flag (?m) anchors
+// ^ and $ to line boundaries.
+var pageBreakRegex = regexp.MustCompile(`(?m)^[ \t]*\\newpage[ \t]*$`)
+
+// pageBreakHTML is the HTML emitted in place of a \newpage marker. The
+// .pagebreak class is defined in each shipped template's style.css; the
+// inline style provides a safety net for custom templates that forget to
+// add the rule.
+var pageBreakHTML = []byte(`<div class="pagebreak" style="break-after: page; page-break-after: always;"></div>`)
+
+// expandPageBreaks converts standalone '\newpage' lines into the HTML
+// page-break div before the markdown reaches goldmark. To keep a literal
+// '\newpage' that should NOT trigger a break, escape it as '\\newpage'.
+func expandPageBreaks(src []byte) []byte {
+	return pageBreakRegex.ReplaceAll(src, pageBreakHTML)
+}
+
 // markdownToHTML converts CommonMark+GFM markdown to HTML, embedding local
 // images as base64 data URIs and (depending on flags / inline markers)
 // injecting a table of contents.
 func markdownToHTML(src []byte, baseDir string, autoTOC bool) ([]byte, error) {
+	src = expandPageBreaks(src)
+
 	headings := &headingCollector{}
 
 	md := goldmark.New(

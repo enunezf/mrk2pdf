@@ -46,3 +46,9 @@ code[class*="language-"],
 pre[class*="language-"] {
     text-shadow: none;
 }
+
+/* Salto de página (\newpage en el markdown) */
+.pagebreak {
+    break-after: page;
+    page-break-after: always;
+}
