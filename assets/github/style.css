@@ -1,0 +1,48 @@
+/* GitHub template — overrides mínimos sobre github-markdown-css */
+/* La idea: dejar al CSS de GitHub hacer casi todo y solo ajustar lo  */
+/* que tiene sentido cambiar para imprimir en A4.                    */
+
+@page {
+    size: A4;
+    margin: 2cm 1.8cm;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+/* GitHub usa max-width 980px y padding 45px, pensados para web.       */
+/* Para A4 (~595×842 px a 96dpi) los márgenes los maneja @page.        */
+.markdown-body {
+    box-sizing: border-box;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+/* Bloques que no deben partirse entre páginas */
+.markdown-body pre,
+.markdown-body table,
+.markdown-body blockquote,
+.markdown-body img,
+.mermaid {
+    page-break-inside: avoid;
+}
+
+/* Mermaid: el wrapper transformado desde <pre><code class="language-mermaid"> */
+.mermaid {
+    text-align: center;
+    margin: 1em 0;
+    /* Quitar el fondo gris que github-markdown-css aplica a <pre> */
+    background: transparent;
+    padding: 0;
+}
+
+/* Prism puede sumar un text-shadow que en print queda raro */
+code[class*="language-"],
+pre[class*="language-"] {
+    text-shadow: none;
+}

@@ -11,9 +11,18 @@ El binario descubre las plantillas dinámicamente en tiempo de ejecución: alcan
 
 ## Cómo se descubre una plantilla
 
-1. Al primer arranque, el binario extrae sus plantillas embebidas (`default`, `elegante`, `cian`) en `template/<nombre>/` si no existen todavía
+1. Al primer arranque, el binario extrae sus plantillas embebidas (`default`, `elegante`, `cian`, `github`) en `template/<nombre>/` si no existen todavía
 2. En cada ejecución, `mrk2pdf -l` lista todos los subdirectorios de `template/`
 3. `mrk2pdf -i archivo.md -t <nombre>` carga `template/<nombre>/index.html` y `template/<nombre>/style.css` en cada render
+
+## Plantillas embebidas
+
+| Nombre | Estilo | Uso típico |
+|---|---|---|
+| `default` | Sans-serif simple con metadata header | Reports, notas, documentación interna |
+| `elegante` | Serif (Playfair + Lora), navy + dorado, cover page | Informes formales, propuestas |
+| `cian` | Sans-serif (Inter), bandas cian arriba y abajo en cada página | Documentación corporativa con identidad visual |
+| `github` | Clon visual de cómo GitHub renderiza un README en su web (vía `github-markdown-css`) | READMEs, documentación open-source, archivos pensados para GitHub |
 
 El flag `-d` regenera **solo** `template/default/` desde el embed; el resto de plantillas nunca es sobrescrito automáticamente, así que tus customizaciones se preservan.
 

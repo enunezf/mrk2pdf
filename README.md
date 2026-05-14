@@ -190,6 +190,7 @@ Plantillas embebidas en el binario:
 - `default` — tipografía sans-serif, encabezado simple con metadata; estilo limpio para reports y notas
 - `elegante` — serif (Playfair + Lora), navy + dorado, cover page completa, running headers
 - `cian` — sans-serif (Inter), bandas cian en cada página vía `@page` margin boxes
+- `github` — clon visual de cómo GitHub renderiza un README en su web (vía `github-markdown-css`). Sin meta header; si quieres título en el PDF, ponlo como `# Título` al inicio del `.md` (convención de GitHub readmes).
 
 Para crear una plantilla custom, ver [`template/README.md`](template/README.md).
 

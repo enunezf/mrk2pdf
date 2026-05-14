@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Meta.Title}}</title>
+    <!-- github-markdown-css 5.x (sólo light; evita prefers-color-scheme dark) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown-light.min.css">
+    <!-- Syntax highlighting (Prism) — el wrapper <pre> hereda el fondo gris de GitHub -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>{{.Styles}}</style>
+</head>
+<body>
+    <article class="markdown-body">
+        {{.Content}}
+    </article>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        (function () {
+            document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+                var div = document.createElement('div');
+                div.className = 'mermaid';
+                div.textContent = code.textContent;
+                code.parentElement.replaceWith(div);
+            });
+            if (window.Prism) { Prism.highlightAll(); }
+            if (window.mermaid) {
+                window.mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'default' });
+                window.mermaid.run().catch(function (e) { console.error('mermaid:', e); });
+            }
+        })();
+    </script>
+</body>
+</html>
