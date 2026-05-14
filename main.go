@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 
 	"mrk2pdf/internal/converter"
+	"mrk2pdf/internal/pdf"
 )
-
-const previewPath = "preview.html"
 
 func main() {
 	cfg, err := parseFlags()
@@ -31,6 +29,12 @@ func main() {
 
 	fmt.Printf("Usando template: %s\n", cfg.Template)
 
+	browserPath, err := pdf.FindBrowser()
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	fmt.Printf("Usando navegador: %s\n", browserPath)
+
 	html, err := converter.Render(converter.Options{
 		InputPath:   cfg.Input,
 		TemplateDir: filepath.Join(templateRoot, cfg.Template),
@@ -39,9 +43,9 @@ func main() {
 		log.Fatalf("error generando HTML: %v", err)
 	}
 
-	if err := os.WriteFile(previewPath, html, 0o644); err != nil {
-		log.Fatalf("error escribiendo %s: %v", previewPath, err)
+	fmt.Println("Generando PDF...")
+	if err := pdf.GeneratePDF(html, cfg.Output, browserPath); err != nil {
+		log.Fatalf("error generando PDF: %v", err)
 	}
-	fmt.Printf("Previa HTML generada: %s\n", previewPath)
-	fmt.Println("(La conversión a PDF se implementará en el siguiente paso.)")
+	fmt.Printf("PDF generado: %s\n", cfg.Output)
 }

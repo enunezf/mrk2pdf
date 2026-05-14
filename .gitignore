@@ -9,5 +9,5 @@
 # Regenerated at runtime from embedded assets
 /template/
 
-# Preview HTML used during development of the conversion step
-/preview.html
+# Generated PDF outputs (regenerated on each run)
+*.pdf
