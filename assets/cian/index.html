@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Meta.Title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        /* Cyan running header and footer bands on every page. */
+        @page {
+            margin: 2.6cm 1.8cm 2.6cm 1.8cm;
+
+            @top-left   { content: ""; background-color: #0891b2; }
+            @top-center {
+                content: "{{.Meta.Title}}";
+                background-color: #0891b2;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 10pt;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+            @top-right  { content: ""; background-color: #0891b2; }
+
+            @bottom-left {
+                content: "{{if .Meta.Author}}{{.Meta.Author}}{{end}}";
+                background-color: #0891b2;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 9pt;
+                padding: 0 0.6em;
+            }
+            @bottom-center { content: ""; background-color: #0891b2; }
+            @bottom-right {
+                content: "Página " counter(page) " / " counter(pages);
+                background-color: #0891b2;
+                color: white;
+                font-family: 'Inter', sans-serif;
+                font-size: 9pt;
+                padding: 0 0.6em;
+            }
+        }
+    </style>
+    <style>{{.Styles}}</style>
+</head>
+<body>
+    {{if .Meta.Title}}
+    <header class="meta">
+        {{if .Meta.Author}}<div class="meta-author">{{.Meta.Author}}</div>{{end}}
+        {{if .Meta.Date}}<div class="meta-date">{{.Meta.Date}}</div>{{end}}
+        {{if .Meta.Tags}}
+        <div class="meta-tags">{{range .Meta.Tags}}<span class="tag">{{.}}</span>{{end}}</div>
+        {{end}}
+    </header>
+    {{end}}
+
+    <main class="content">
+        {{.Content}}
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        (function () {
+            document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+                var div = document.createElement('div');
+                div.className = 'mermaid';
+                div.textContent = code.textContent;
+                code.parentElement.replaceWith(div);
+            });
+            if (window.Prism) { Prism.highlightAll(); }
+            if (window.mermaid) {
+                window.mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'default' });
+                window.mermaid.run().catch(function (e) { console.error('mermaid:', e); });
+            }
+        })();
+    </script>
+</body>
+</html>

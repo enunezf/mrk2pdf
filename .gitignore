@@ -6,8 +6,10 @@
 *.test
 *.out
 
-# Regenerated at runtime from embedded assets
-/template/
+# Regenerated at runtime from embedded assets — except the README which
+# is committed in git as a tutorial for users adding their own templates.
+/template/*
+!/template/README.md
 
 # Generated PDF outputs (regenerated on each run)
 *.pdf

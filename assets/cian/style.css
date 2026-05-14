@@ -1,0 +1,186 @@
+:root {
+    --cian: #0891b2;
+    --cian-soft: #cffafe;
+    --cian-bg: #ecfeff;
+    --text: #1a1a1a;
+    --muted: #666;
+    --rule: #e5e5e5;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    color: var(--cian);
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    line-height: 1.25;
+}
+
+h1 { font-size: 22pt; }
+h2 {
+    font-size: 17pt;
+    border-bottom: 3px solid var(--cian);
+    padding-bottom: 0.2em;
+}
+h3 { font-size: 13pt; }
+h4 { font-size: 11.5pt; }
+
+p { margin: 0 0 0.8em 0; }
+
+a { color: var(--cian); text-decoration: underline; }
+
+/* ─── Metadata strip below the cyan header band ───────────────── */
+.meta {
+    margin: 0 0 1.8em 0;
+    padding: 0.8em 0 1em 0;
+    border-bottom: 2px solid var(--cian-soft);
+}
+
+.meta-author {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12pt;
+}
+
+.meta-date {
+    color: var(--muted);
+    font-size: 10pt;
+    margin-top: 0.2em;
+    letter-spacing: 0.04em;
+}
+
+.meta-tags {
+    margin-top: 0.6em;
+}
+
+.tag {
+    display: inline-block;
+    background: var(--cian);
+    color: white;
+    padding: 0.2em 0.8em;
+    margin: 0.15em 0.1em 0.15em 0;
+    border-radius: 12px;
+    font-size: 9pt;
+    font-weight: 500;
+}
+
+/* ─── Inline and block code ────────────────────────────────────── */
+code {
+    font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+    background: var(--cian-bg);
+    color: var(--cian);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.92em;
+}
+
+pre[class*="language-"] {
+    background: #2d2d2d;
+    border-radius: 6px;
+    padding: 1em 1.2em;
+    margin: 1.2em 0;
+    font-size: 9.5pt;
+    overflow-x: auto;
+    border-left: 4px solid var(--cian);
+}
+
+pre[class*="language-"] code,
+code[class*="language-"] {
+    background: transparent;
+    color: #ccc;
+    padding: 0;
+    text-shadow: none;
+}
+
+/* ─── Blockquotes ──────────────────────────────────────────────── */
+blockquote {
+    border-left: 4px solid var(--cian);
+    background: var(--cian-bg);
+    padding: 0.8em 1.2em;
+    margin: 1.2em 0;
+    color: var(--text);
+    border-radius: 0 4px 4px 0;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+blockquote strong { color: var(--cian); }
+
+/* ─── Tables ───────────────────────────────────────────────────── */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.2em 0;
+}
+
+th {
+    background: var(--cian);
+    color: white;
+    padding: 0.6em 0.9em;
+    text-align: left;
+    font-weight: 600;
+}
+
+td {
+    padding: 0.5em 0.9em;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+}
+
+tr:nth-child(even) td { background: var(--cian-bg); }
+
+/* ─── Lists ────────────────────────────────────────────────────── */
+ul, ol { padding-left: 1.4em; margin: 0.5em 0 1em 0; }
+li { margin-bottom: 0.3em; }
+ul li::marker { color: var(--cian); }
+ol li::marker { color: var(--cian); font-weight: 700; }
+
+/* ─── Images ───────────────────────────────────────────────────── */
+img {
+    max-width: 100%;
+    margin: 1em 0;
+    border-radius: 4px;
+    display: block;
+}
+
+/* ─── Horizontal rule ──────────────────────────────────────────── */
+hr {
+    border: 0;
+    border-top: 2px solid var(--cian);
+    margin: 2em auto;
+    width: 50%;
+}
+
+/* ─── Table of contents ────────────────────────────────────────── */
+.toc {
+    background: var(--cian-bg);
+    border-left: 4px solid var(--cian);
+    padding: 1.4em 1.8em;
+    margin: 2em 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.toc-title {
+    margin: 0 0 0.8em 0;
+    font-size: 15pt;
+    color: var(--cian);
+    border: none;
+    padding: 0;
+}
+
+.toc ul { margin: 0; padding-left: 1.2em; list-style: none; }
+.toc ul ul { padding-left: 1.2em; font-size: 0.95em; margin-top: 0.3em; }
+.toc li { margin-bottom: 0.3em; }
+.toc a { color: var(--text); text-decoration: none; }
+.toc a::before {
+    content: "›";
+    color: var(--cian);
+    margin-right: 0.5em;
+    font-weight: 700;
+}
