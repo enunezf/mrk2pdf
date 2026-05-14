@@ -18,6 +18,7 @@ type Config struct {
 	ForceDefault  bool
 	ListTemplates bool
 	AutoTOC       bool
+	Recursive     bool
 	PageSize      pdf.PageSize
 	Landscape     bool
 }
@@ -26,18 +27,20 @@ func parseFlags() (*Config, error) {
 	cfg := &Config{}
 	var rawSize string
 
-	flag.StringVar(&cfg.Input, "i", "", "ruta del archivo Markdown de entrada (obligatorio salvo con -l)")
-	flag.StringVar(&cfg.Output, "o", "", "ruta del archivo PDF de salida (por defecto: <input>.pdf)")
+	flag.StringVar(&cfg.Input, "i", "", "archivo, directorio o glob (obligatorio salvo con -l)")
+	flag.StringVar(&cfg.Output, "o", "", "archivo PDF o directorio destino (por defecto: <input>.pdf)")
 	flag.StringVar(&cfg.Template, "t", defaultTemplate, "nombre del template (carpeta dentro de template/)")
 	flag.BoolVar(&cfg.ForceDefault, "d", false, "forzar sobrescritura de template/default")
 	flag.BoolVar(&cfg.ListTemplates, "l", false, "listar las plantillas disponibles y salir")
 	flag.BoolVar(&cfg.AutoTOC, "toc", false, "prepend tabla de contenidos al inicio del documento")
+	flag.BoolVar(&cfg.Recursive, "R", false, "buscar recursivamente cuando -i es un directorio")
 	flag.StringVar(&rawSize, "size", "A4", "tamaño de página (A4 o Letter)")
 	flag.BoolVar(&cfg.Landscape, "landscape", false, "orientación apaisada")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Uso:\n")
-		fmt.Fprintf(os.Stderr, "  %s -i <archivo.md> [-o <salida.pdf>] [-t <template>] [--toc] [--size A4|Letter] [--landscape]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -i <archivo.md|dir|glob> [-o <salida|dir>] [-t <template>] [--toc] [--size A4|Letter] [--landscape] [-R]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s [opciones] <archivo.md>...\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "  %s -l\n\n", os.Args[0])
 		flag.PrintDefaults()
 	}
@@ -45,18 +48,12 @@ func parseFlags() (*Config, error) {
 	flag.Parse()
 
 	if cfg.ListTemplates {
-		// -l is a standalone informational mode; skip the input/page validation.
 		return cfg, nil
 	}
 
-	if cfg.Input == "" {
+	if cfg.Input == "" && len(flag.Args()) == 0 {
 		flag.Usage()
-		return nil, errors.New("el flag -i es obligatorio")
-	}
-
-	if cfg.Output == "" {
-		ext := filepath.Ext(cfg.Input)
-		cfg.Output = strings.TrimSuffix(cfg.Input, ext) + ".pdf"
+		return nil, errors.New("se requiere al menos un archivo .md (vía -i o como argumento posicional)")
 	}
 
 	parsed, err := pdf.ParsePageSize(rawSize)
@@ -68,19 +65,19 @@ func parseFlags() (*Config, error) {
 	return cfg, nil
 }
 
-func validateInput(cfg *Config) error {
-	info, err := os.Stat(cfg.Input)
+func validateInputFile(path string) error {
+	info, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("el archivo de entrada no existe: %s", cfg.Input)
+			return fmt.Errorf("el archivo no existe: %s", path)
 		}
-		return fmt.Errorf("no se pudo leer el archivo de entrada: %w", err)
+		return fmt.Errorf("no se pudo leer %s: %w", path, err)
 	}
 	if info.IsDir() {
-		return fmt.Errorf("la ruta de entrada es un directorio, no un archivo: %s", cfg.Input)
+		return fmt.Errorf("la ruta es un directorio, no un archivo: %s", path)
 	}
-	if strings.ToLower(filepath.Ext(cfg.Input)) != ".md" {
-		return fmt.Errorf("el archivo de entrada debe tener extensión .md: %s", cfg.Input)
+	if strings.ToLower(filepath.Ext(path)) != ".md" {
+		return fmt.Errorf("el archivo debe tener extensión .md: %s", path)
 	}
 	return nil
 }

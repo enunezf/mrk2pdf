@@ -17,35 +17,67 @@ const (
 	mermaidTimeout = 15 * time.Second
 )
 
-// Options bundles everything GeneratePDF needs to know.
-type Options struct {
-	HTML        []byte
-	OutputPath  string
-	BrowserPath string
-	PageSize    PageSize
-	Landscape   bool
+// RenderOpts is the per-document input to Renderer.Render.
+type RenderOpts struct {
+	HTML       []byte
+	OutputPath string
+	PageSize   PageSize
+	Landscape  bool
 }
 
-// GeneratePDF launches a Chromium-based browser in headless mode, loads
-// opts.HTML via a data: URL, waits for any mermaid diagrams to finish
-// rendering, and writes the resulting PDF to opts.OutputPath.
-func GeneratePDF(opts Options) error {
-	alloc, err := newAllocator(context.Background(), opts.BrowserPath)
+// Renderer wraps a long-lived headless browser session so batch jobs can
+// amortise the browser startup cost across many documents. Each Render
+// call opens a fresh tab in the same browser; Close terminates everything.
+type Renderer struct {
+	browserPath   string
+	alloc         *allocator
+	browserCtx    context.Context
+	cancelBrowser context.CancelFunc
+}
+
+// NewRenderer launches the given Chromium-based browser in headless mode
+// and prepares a chromedp browser context. The browser process itself is
+// launched lazily on the first Render call.
+func NewRenderer(browserPath string) (*Renderer, error) {
+	alloc, err := newAllocator(context.Background(), browserPath)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer alloc.Close()
-
 	browserCtx, cancelBrowser := chromedp.NewContext(alloc.ctx)
-	defer cancelBrowser()
+	return &Renderer{
+		browserPath:   browserPath,
+		alloc:         alloc,
+		browserCtx:    browserCtx,
+		cancelBrowser: cancelBrowser,
+	}, nil
+}
 
-	runCtx, cancelRun := context.WithTimeout(browserCtx, overallTimeout)
+// Close terminates the browser process and frees associated resources.
+func (r *Renderer) Close() {
+	if r.cancelBrowser != nil {
+		r.cancelBrowser()
+	}
+	if r.alloc != nil {
+		r.alloc.Close()
+	}
+}
+
+// Render loads opts.HTML in a fresh tab of the running browser, waits for
+// any mermaid diagrams to finish, prints the page as PDF and writes the
+// bytes to opts.OutputPath. Deriving the per-call context from browserCtx
+// (rather than from the allocator) is what makes subsequent calls reuse
+// the same browser instead of spawning a new process each time.
+func (r *Renderer) Render(opts RenderOpts) error {
+	tabCtx, cancelTab := chromedp.NewContext(r.browserCtx)
+	defer cancelTab()
+
+	runCtx, cancelRun := context.WithTimeout(tabCtx, overallTimeout)
 	defer cancelRun()
 
 	dataURL := "data:text/html;base64," + base64.StdEncoding.EncodeToString(opts.HTML)
 
 	var pdfBytes []byte
-	err = chromedp.Run(runCtx,
+	err := chromedp.Run(runCtx,
 		chromedp.Navigate(dataURL),
 		chromedp.WaitReady("body", chromedp.ByQuery),
 		chromedp.ActionFunc(waitForMermaid),
@@ -68,7 +100,7 @@ func GeneratePDF(opts Options) error {
 		}),
 	)
 	if err != nil {
-		if IsWindowsExecutable(opts.BrowserPath) && looksLikeNetworkError(err) {
+		if IsWindowsExecutable(r.browserPath) && looksLikeNetworkError(err) {
 			return fmt.Errorf("%w\n\n%s", err, wslFirewallHelp())
 		}
 		return fmt.Errorf("generando PDF: %w", err)
