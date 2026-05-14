@@ -62,6 +62,13 @@ func main() {
 	}
 	defer renderer.Close()
 
+	if cfg.Watch {
+		if err := runWatch(cfg, inputs, renderer); err != nil {
+			log.Fatalf("error en modo watch: %v", err)
+		}
+		return
+	}
+
 	orientation := "vertical"
 	if cfg.Landscape {
 		orientation = "apaisada"

@@ -19,6 +19,7 @@ type Config struct {
 	ListTemplates bool
 	AutoTOC       bool
 	Recursive     bool
+	Watch         bool
 	PageSize      pdf.PageSize
 	Landscape     bool
 }
@@ -34,6 +35,7 @@ func parseFlags() (*Config, error) {
 	flag.BoolVar(&cfg.ListTemplates, "l", false, "listar las plantillas disponibles y salir")
 	flag.BoolVar(&cfg.AutoTOC, "toc", false, "prepend tabla de contenidos al inicio del documento")
 	flag.BoolVar(&cfg.Recursive, "R", false, "buscar recursivamente cuando -i es un directorio")
+	flag.BoolVar(&cfg.Watch, "w", false, "modo watch: regenera al detectar cambios (Ctrl+C para salir)")
 	flag.StringVar(&rawSize, "size", "A4", "tamaño de página (A4 o Letter)")
 	flag.BoolVar(&cfg.Landscape, "landscape", false, "orientación apaisada")
 

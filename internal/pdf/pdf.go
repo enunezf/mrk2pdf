@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/chromedp/cdproto/page"
@@ -28,11 +29,14 @@ type RenderOpts struct {
 // Renderer wraps a long-lived headless browser session so batch jobs can
 // amortise the browser startup cost across many documents. Each Render
 // call opens a fresh tab in the same browser; Close terminates everything.
+// Renders are serialised by an internal mutex so the type is safe to share
+// across goroutines (e.g. watch-mode event handlers firing in parallel).
 type Renderer struct {
 	browserPath   string
 	alloc         *allocator
 	browserCtx    context.Context
 	cancelBrowser context.CancelFunc
+	mu            sync.Mutex
 }
 
 // NewRenderer launches the given Chromium-based browser in headless mode
@@ -68,6 +72,9 @@ func (r *Renderer) Close() {
 // (rather than from the allocator) is what makes subsequent calls reuse
 // the same browser instead of spawning a new process each time.
 func (r *Renderer) Render(opts RenderOpts) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	tabCtx, cancelTab := chromedp.NewContext(r.browserCtx)
 	defer cancelTab()
 
